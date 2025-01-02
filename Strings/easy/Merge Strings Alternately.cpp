@@ -1,3 +1,5 @@
+//TC: O(max(m, n))
+//TC: O(1) :Excluding output
 class Solution {
 public:
     string mergeAlternately(string word1, string word2) {
