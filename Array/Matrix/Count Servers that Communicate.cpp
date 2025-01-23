@@ -1,3 +1,71 @@
+// Approach 1: Optimal
+// TC: O(m*n)
+// SC: O(m+n)
+class Solution {
+ public:
+  int countServers(vector<vector<int>>& grid) {
+    int m = grid.size();
+    int n = grid[0].size();
+
+    vector<int> serverCountRowWise(m);
+    vector<int> serverCountColWise(n);
+
+    for (int i = 0; i < m; i++) {  // TC: O(m*n)
+      for (int j = 0; j < n; j++) {
+        if (grid[i][j] == 1) {
+          serverCountRowWise[i]++;
+          serverCountColWise[j]++;
+        }
+      }
+    }
+    // Counting connected servers
+    int connectedServers = 0;
+    for (int i = 0; i < m; i++) {  // TC: O(m*n)
+      for (int j = 0; j < n; j++) {
+        if (grid[i][j] == 1 &&
+            (serverCountRowWise[i] > 1 || serverCountColWise[j] > 1)) {
+          connectedServers++;
+        }
+      }
+    }
+
+    return connectedServers;
+  }
+};
+// Approach 2:
+// TC: O(m*n)
+// SC: O(m*n)
+class Solution {
+ public:
+  int countServers(vector<vector<int>>& grid) {
+    vector<pair<int, int>> servers;
+
+    int m = grid.size();
+    int n = grid[0].size();
+    for (int i = 0; i < m; i++) {  // TC: O(m*n)
+      for (int j = 0; j < n; j++) {
+        if (grid[i][j]) servers.push_back({i, j});
+      }
+    }
+
+    int connectedServers = 0;                    // count of connected servers
+    for (int i = 0; auto& [i_, j_] : servers) {  // O(m*n)
+      bool connected = false;
+
+      for (int j = 0; auto& [server_i, server_j] : servers) {
+        if (i != j && (i_ == server_i || j_ == server_j)) {
+          connected = true;
+          break;
+        }
+        j++;
+      }
+      if (connected) connectedServers += 1;
+      i++;
+    }
+
+    return connectedServers;
+  }
+};
 // Approach 3: Brute force
 // TC: O(m*n)
 // SC: O(m*n)
