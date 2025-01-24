@@ -44,5 +44,3 @@
    - Resolving dependencies in software systems or libraries.
 
 ---
-
-Feel free to expand or customize this further!
