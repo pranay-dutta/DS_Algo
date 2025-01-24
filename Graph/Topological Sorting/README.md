@@ -1,7 +1,7 @@
 # Topological Sorting for Directed Acyclic Graph (DAG)
 
 ## Introduction
-**Topological Sorting** is a linear ordering of vertices such that for every directed edge \( u \to v \), vertex \( u \) appears before \( v \) in the ordering.
+**Topological Sorting** is a linear ordering of vertices such that for every directed edge \( u -> v \), vertex \( u \) appears before \( v \) in the ordering.
 
 ### Key Notes:
 - Topological sorting is only possible for **Directed Acyclic Graphs (DAGs)**.
