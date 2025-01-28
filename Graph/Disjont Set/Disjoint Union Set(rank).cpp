@@ -1,3 +1,4 @@
+//DSU time complexity is denoted Inverse Ackermann  
 class DSU {
  private:
   vector<int> parent;
@@ -13,13 +14,14 @@ class DSU {
     }
   }
 
-  int find(int i) {
+  int find(int i) { //TC: O(a(n))
     if (parent[i] == i) return i;
     return parent[i] = find_set(parent[i]);  // path compression
   }
-  void Union(int x, int y) {
-    int x_parent = find_set(x);
-    int y_parent = find_set(y);
+  
+  void Union(int x, int y) { //TC: O(a(n))
+    int x_parent = find(x);
+    int y_parent = find(y);
     if (x_parent == y_parent) return;  // parent is same
 
     if (rank[x_parent] < rank[y_parent]) {
