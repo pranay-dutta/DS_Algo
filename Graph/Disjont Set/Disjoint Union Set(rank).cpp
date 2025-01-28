@@ -1,4 +1,4 @@
-//DSU time complexity is denoted Inverse Ackermann  
+//DSU time complexity is denoted Inverse Ackermann function (aka: alpha(a)) 
 class DSU {
  private:
   vector<int> parent;
