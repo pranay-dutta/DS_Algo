@@ -1,4 +1,4 @@
-// Approach 2: using DFS
+// Approach 1: using DFS
 // TC: O(m*n)
 // TC: O(1) | Only stack space
 class Solution {
