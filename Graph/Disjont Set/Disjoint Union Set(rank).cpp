@@ -13,11 +13,11 @@ class DSU {
     }
   }
 
-  int find_set(int i) {
+  int find(int i) {
     if (parent[i] == i) return i;
     return parent[i] = find_set(parent[i]);  // path compression
   }
-  void union_sets(int x, int y) {
+  void Union(int x, int y) {
     int x_parent = find_set(x);
     int y_parent = find_set(y);
     if (x_parent == y_parent) return;  // parent is same
