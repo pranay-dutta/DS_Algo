@@ -1,106 +1,110 @@
-// Approach - Using Bipartite, DFS and BFS
-// T.C : O(V * (V+E))
-// S.C : O(V+E)
+// Approach 1: Bipartite graph
+// TC: O(V * (V+E))
+// SC: O(V+E)
 class Solution {
  public:
-  // 1 : Red
-  // 0 : Green
-  bool isBipartite(unordered_map<int, vector<int>> &adj, int curr,
-                   vector<int> &colors, int currColor) {
-    colors[curr] = currColor;
+  // 1 - Red, 0 - Green
+  bool DFS(int u, int curColor, vector<vector<int>>& adjList, vector<int>& color) {
+    color[u] = curColor;
 
-    for (int &ngbr : adj[curr]) {
-      if (colors[ngbr] == colors[curr]) {
-        return false;
-      }
-
-      if (colors[ngbr] == -1) {
-        if (isBipartite(adj, ngbr, colors, 1 - currColor) == false) {
+    // Color the ngbrs
+    for (int& v : adjList[u]) {
+      if (color[v] == color[u]) return false;
+      if (color[v] == -1) {  // color isn't assigned yet
+        int colorOfV = !curColor;
+        if (DFS(v, colorOfV, adjList, color) == false) {
           return false;
         }
       }
     }
-
     return true;
   }
+  bool isBipartite(vector<vector<int>>& adjList) {
+    int n = adjList.size();
+    vector<int> color(n, -1);
 
-  int bfs(unordered_map<int, vector<int>> &adj, int currNode, int n) {
+    // 1 - n nodes
+    for (int u = 1; u < n; u++) {  // O(V) each node will be visied once inside dfs also
+      if (color[u] == -1 && !DFS(u, 0, adjList, color)) {
+        return false;
+      }
+    }
+    return true;
+  }
+  // Calculating each node's max level
+  int BFS(int u, vector<vector<int>>& adjList, int n) {
+    vector<int> visited(n, false);  // SC: O(V)
+    visited[u] = true;
+
     queue<int> que;
-    vector<bool> visited(n, false);
-    que.push(currNode);
-    visited[currNode] = true;
+    que.push(u);
+    que.push(-1);  // level separator
 
-    int level = 1;  // max groups in that components
+    int level = 0;
     while (!que.empty()) {
-      int size = que.size();
-      while (size--) {
-        int curr = que.front();
-        que.pop();
+      int u = que.front();
+      que.pop();
 
-        for (int &ngbr : adj[curr]) {
-          if (visited[ngbr]) continue;
-
-          que.push(ngbr);
-          visited[ngbr] = true;
+      if (u == -1) {
+        if (!que.empty()) {
+          que.push(-1);  // add new spearator
         }
+        level++;
+        continue;  // skip -1 node
       }
-      level++;  // 1 extra will be incremeented in the last loop
-    }
 
-    return level - 1;
-  }
-
-  int getMaxFromEachComp(unordered_map<int, vector<int>> &adj, int curr,
-                         vector<bool> &visited, vector<int> &levels) {
-    int maxGrp = levels[curr];
-    visited[curr] = true;
-
-    for (int &ngbr : adj[curr]) {
-      if (!visited[ngbr]) {
-        maxGrp = max(maxGrp, getMaxFromEachComp(adj, ngbr, visited, levels));
-      }
-    }
-
-    return maxGrp;
-  }
-
-  int magnificentSets(int n, vector<vector<int>> &edges) {
-    unordered_map<int, vector<int>> adj;  // O(V+E) space
-
-    for (auto &edge : edges) {
-      int u = edge[0] - 1;  // converting to 0-based idnex
-      int v = edge[1] - 1;
-
-      adj[u].push_back(v);
-      adj[v].push_back(u);
-    }
-
-    // Bipartite check
-    vector<int> colors(n, -1);  // O(V)
-    // O(V*(V+E))
-    for (int node = 0; node < n; node++) {  // O(n)
-      if (colors[node] == -1) {
-        if (isBipartite(adj, node, colors, 1) == false) {  // O(V+E)
-          return -1;
+      for (int& v : adjList[u]) {
+        if (!visited[v]) {
+          visited[v] = true;
+          que.push(v);
         }
       }
     }
+    return level;
+  }
 
-    // BFS karke max levels nikalo for each node
-    vector<int> levels(n, 0);
-    // T.C :O(V * (V+E))
-    for (int node = 0; node < n; node++) {  // O(V)
-      levels[node] = bfs(adj, node, n);     // O(V+E)
-    }
+  // Returns maxLevel from each connected component
+  int getMaxLevel(int u, vector<vector<int>>& adjList, vector<bool>& visited, vector<int>& levels) {
+    visited[u] = true;
+    int maxLvl = levels[u];
 
-    int maxGroupEachComp = 0;
-    vector<bool> visited(n, false);
-    for (int node = 0; node < n; node++) {  // O(V * (V+E))
-      if (!visited[node]) {
-        maxGroupEachComp += getMaxFromEachComp(adj, node, visited, levels);
+    for (int& v : adjList[u]) {
+      if (!visited[v]) {
+        maxLvl = max(maxLvl, getMaxLevel(v, adjList, visited, levels));
       }
     }
+    return maxLvl;
+  }
+  int magnificentSets(int n, vector<vector<int>>& edges) {
+    n += 1;                          // 1 - n nodes
+    vector<vector<int>> adjList(n);  // SC: O(V+E)
 
-    return maxGroupEachComp;
+    for (auto& edge : edges) {  // TC: O(E)
+      int u = edge[0];
+      int v = edge[1];
+      adjList[u].push_back(v);
+      adjList[v].push_back(u);
+    }
+
+    // if any connected component isn't bipartite(ie. can't be divided into
+    // groups) return -1
+    if (!isBipartite(adjList)) return -1;  // TC: O(V)
+
+    vector<int> levels(n);  // SC: O(V)
+
+    // time: O(V * (V+E)) --Highest term
+    for (int u = 1; u < n; u++) {      // TC: O(V)
+      levels[u] = BFS(u, adjList, n);  // O(V+E)
+    }
+
+    // Get max group(ie. level) from each connected component
+    int maxGroupsFromEachComponent = 0;
+    vector<bool> visited(n, false);  // SC: O(V)
+    for (int u = 1; u < n; u++) {    // TC: O(V)
+      if (!visited[u]) {
+        maxGroupsFromEachComponent += getMaxLevel(u, adjList, visited, levels);
+      }
+    }
+    return maxGroupsFromEachComponent;
   }
 };
