@@ -1,27 +1,32 @@
-// Approach 1: Two pointer
+// Approach 1:
 // TC: O(n)
-// SC: O(n)
+// SC: O(1)
 class Solution {
+ private:
+  int sqr(int n) { return n * n; }
+
  public:
   vector<int> sortedSquares(vector<int>& nums) {
-    int n = nums.size();
-    int start = 0;
-    int end = n - 1;
-    vector<int> squareNums(n);
+    int n = nums.size(), l = 0, r = n - 1;
 
+    vector<int> res(n);
+    int endIdx = n - 1;
+
+    /*
+      ? Why adding max value at the last ? 
+      = As the array sorted in incresing order
+      = it's guranteed lowest negative or highest positive will give me
+      = highest square.
+    */
     for (int i = 0; i < n; i++) {
-      int startSq = nums[start] * nums[start];
-      int endSq = nums[end] * nums[end];
+      int startSq = sqr(nums[l]);
+      int endSq = sqr(nums[r]);
 
-      if (startSq > endSq) {
-        ++start;
-        squareNums[n - i - 1] = startSq;
-      } else {
-        --end;
-        squareNums[n - i - 1] = endSq;
-      }
+      // Gradually add the value to the last
+      res[endIdx--] = max(startSq, endSq);
+      startSq > endSq ? l++ : r--;
     }
-    return squareNums;
+    return res;
   }
 };
 
