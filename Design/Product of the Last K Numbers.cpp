@@ -1,3 +1,6 @@
+// Approach 1: Optimal
+// TC: O(1)
+// SC: O(1)
 class ProductOfNumbers {
  private:
   vector<int> stream;  // O(1) : Worst case: 100
@@ -25,5 +28,26 @@ class ProductOfNumbers {
 
     int totalProduct = stream.back();
     return totalProduct / stream[n - k - 1];  //[totalProduct / [n-k-1]] will give you rest of the prodct from [n-k-1] to [n-1]
+  }
+};
+
+//Brute force:
+// TC: O(k)
+// SC: O(1)
+class ProductOfNumbers {
+ public:
+  vector<int> vec;
+  ProductOfNumbers() {}
+
+  void add(int num) { vec.push_back(num); }
+
+  int getProduct(int k) {
+    int n = vec.size();
+    int product = 1, i = n - 1;
+    while (k--) {
+      product *= vec[i--];
+      if (product == 0) return 0;
+    }
+    return product;
   }
 };
