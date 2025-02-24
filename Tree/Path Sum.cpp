@@ -1,12 +1,18 @@
+// Appraoch 1:
+// TC: O(n)
+// SC: O(n) -system stack
 class Solution {
-public:
-    bool hasPathSum(TreeNode* root, int targetSum) {
-        if (!root) return false;
+ public:
+  bool hasPathSum(TreeNode* root, int targetSum) {
+    if (!root) return 0;
 
-        if (!root->left && !root->right)  return targetSum - root->val == 0;
+    targetSum = targetSum - root->val;
+    if (targetSum == 0 && !root->left && !root->right) return true;  // if it's a leaf node only
 
-        targetSum -= root->val;
+    bool found = false;
+    found |= hasPathSum(root->left, targetSum);
+    found |= hasPathSum(root->right, targetSum);
 
-        return hasPathSum(root->left, targetSum) || hasPathSum(root->right, targetSum);        
-    }
+    return found;
+  }
 };
