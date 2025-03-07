@@ -1,3 +1,6 @@
+// Approach 1:
+// TC: O(SQRT(n))
+// SC: O(1)
 class Solution {
  public:
   bool isPrime(int n) {
