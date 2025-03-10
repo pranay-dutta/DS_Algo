@@ -1,73 +1,56 @@
-// Approach 1: Sliding Window 
+// Approach 1: Sliding Window
 // T.C : O(2*n) ~ O(n)
 // S.C : O(n)
 class Solution {
  public:
-  bool isVowel(char &ch) {
-    return ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u';
+  bool isVowel(char &c) {
+    return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
   }
   long long countOfSubstrings(string word, int k) {
-    int n = word.length();
+    int n = word.size();
+    int lastConIdx = n;
 
-    unordered_map<char, int> mp;  // to keep count of vowels in a current window
-    // S.C : O(5) constant
-
-    // Preprocessing to be able to find index of just next consonant
-    vector<int> nextCons(n);  // S.C : O(n)
-    int lastConsIdx = n;
-    // T.C : O(n)
-    for (int i = n - 1; i >= 0; i--) {
-      nextCons[i] = lastConsIdx;
-      if (!isVowel(word[i])) {  // consonant
-        lastConsIdx = i;
+    vector<int> nextCons(n); //SC: O(n)
+    for (int i = n - 1; i >= 0; i--) { //TC: O(n)
+      nextCons[i] = lastConIdx;
+      if (!isVowel(word[i])) {
+        lastConIdx = i;
       }
     }
 
-    int i = 0;
-    int j = 0;
-    long long count = 0;
-    int cons = 0;
-    // T.C : O(2*n) ~ O(n)
-    while (j < n) {
-      char ch = word[j];
-      if (isVowel(ch)) {
-        mp[ch]++;
-      } else {
-        cons++;
-      }
+    int i = 0, j = 0, con = 0;
+    long long res = 0;
+    unordered_map<char, int> mp; //SC: O(5)
 
-      // cons must be always == k
-      while (cons > k) {
-        char ch = word[i];
-        if (isVowel(ch)) {
-          mp[ch]--;
-          if (mp[ch] == 0) {
-            mp.erase(ch);
-          }
-        } else {
-          cons--;
-        }
+    while (j < n) { //O(2n)
+      char c = word[j];
+      if (isVowel(c)) mp[c]++;
+      else con++;
+
+      while (con > k) {  // shink the window
+        char c = word[i];
+        if (isVowel(c)) {
+          if (--mp[c] == 0) mp.erase(c);
+        } else
+          con--;
         i++;
       }
 
-      while (i < n && mp.size() == 5 && cons == k) {  // valid window
-        int idx = nextCons[j];   // it will tell me the next consonant after jth index
-        count += idx - j;  // most important part
-        char ch = word[i];
-        if (isVowel(ch)) {
-          mp[ch]--;
-          if (mp[ch] == 0) {
-            mp.erase(ch);
-          }
-        } else {
-          cons--;
-        }
+      // while window is valid
+      while (i < n && mp.size() == 5 && con == k) {
+        int nextConIdx = nextCons[j];
+        char c = word[i];
+        res += nextConIdx - j;
+
+        if (isVowel(c)) {
+          if (--mp[c] == 0) mp.erase(c);
+        } else con--;
+
         i++;
       }
 
       j++;
     }
-
-    return count;
+    return res;
   }
 };
