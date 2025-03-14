@@ -1,3 +1,6 @@
+// Approach 1: Binary search
+// TC: O(n log(m))
+// SC: O(1)
 class Solution {
  public:
   bool isDistributable(int eachStoreGets, vector<int>& q, int shops) {
@@ -5,11 +8,11 @@ class Solution {
 
     for (int prod : q) {
       /* ceil(float(a) / float(b))  =>  (a+b-1)/b */
+      // ceil(float(prod) / float(eachStoreGets))  => maximum this may shops
 
       // needed to distribute current product and each store gets: eachStoreGets
-      shops -= ceil(float(prod) / float(eachStoreGets));   // maximum this many shops
-      if (shops < 0)
-        return false;  // shops exhausted but still product is remaining
+      shops -= ceil(float(prod) / float(eachStoreGets));
+      if (shops < 0) return false;  // shops exhausted but still product is remaining
     }
     return true;
   }

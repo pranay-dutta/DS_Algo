@@ -1,4 +1,4 @@
-// Appraoch 1:
+// Appraoch 1: binary search
 // TC: O(2n log(m)) -- O(n log(m))
 // SC: O(1)
 class Solution {
